@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Juego 3D Capacitación</title>
+<style>
+body{margin:0;overflow:hidden;}
+</style>
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.134/examples/js/loaders/GLTFLoader.js"></script>
+
+<script>
+// ESCENA
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87CEEB);
+
+// CAMARA
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+camera.position.set(0,2,8);
+
+// RENDER
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// LUZ (IMPORTANTE)
+scene.add(new THREE.AmbientLight(0xffffff,1));
+
+// SUELO
+const floor = new THREE.Mesh(
+ new THREE.PlaneGeometry(50,50),
+ new THREE.MeshStandardMaterial({color:0x4caf50})
+);
+floor.rotation.x = -Math.PI/2;
+scene.add(floor);
+
+// LOADER
+const loader = new THREE.GLTFLoader();
+
+// 🧍 PERSONAJE
+loader.load('imagenes/Adventur.glb',
+ (gltf)=>{
+   const p = gltf.scene;
+   p.scale.set(1,1,1);
+   p.position.set(0,0,0);
+   scene.add(p);
+ },
+ undefined,
+ (e)=>console.error("Error personaje:", e)
+);
+
+// 🛏️ CAMA
+loader.load('imagenes/Bed.glb',
+ (gltf)=>{
+   const m = gltf.scene;
+   m.scale.set(2,2,2);
+   m.position.set(-3,0,2);
+   scene.add(m);
+ },
+ undefined,
+ (e)=>console.error("Error cama:", e)
+);
+
+// 🪑 ESCRITORIO
+loader.load('imagenes/Standing.glb',
+ (gltf)=>{
+   const m = gltf.scene;
+   m.scale.set(2,2,2);
+   m.position.set(3,0,2);
+   scene.add(m);
+ },
+ undefined,
+ (e)=>console.error("Error escritorio:", e)
+);
+
+// 📺 TV
+loader.load('imagenes/TV.glb',
+ (gltf)=>{
+   const m = gltf.scene;
+   m.scale.set(2,2,2);
+   m.position.set(0,1,-2);
+   scene.add(m);
+ },
+ undefined,
+ (e)=>console.error("Error TV:", e)
+);
+
+// LOOP
+function animate(){
+ requestAnimationFrame(animate);
+ renderer.render(scene, camera);
+}
+animate();
+
+// RESPONSIVE
+window.addEventListener('resize', ()=>{
+ camera.aspect = window.innerWidth/window.innerHeight;
+ camera.updateProjectionMatrix();
+ renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+
+</body>
+</html>
